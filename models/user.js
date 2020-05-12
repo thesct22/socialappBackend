@@ -42,6 +42,12 @@ userSchema.virtual('password')
 
 //methods
 userSchema.methods={
+    
+    authenticate:function(plainText){
+        return this.encrpytPassword(plainText)===this.hashed_password
+        
+    },
+    
     encrpytPassword: function(password){
         if(!password) return "";
         try{
