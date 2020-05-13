@@ -11,6 +11,6 @@ router.post('/signin', signin);
 router.get('/signout', signout);
 
 //any routes contaning userId our app will firs execute userId
-router.param("userId", userById)
+router.param("userId", userById);
 
 module.exports=router;
