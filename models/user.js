@@ -1,76 +1,80 @@
-const mongoose = require('mongoose');
-const uuidv1 = require('uuid/v1');
-const crypto = require('crypto');
-const {ObjectId}=mongoose.Schema;
+const mongoose = require("mongoose");
+const uuidv1 = require("uuid/v1");
+const crypto = require("crypto");
+const { ObjectId } = mongoose.Schema;
+
 const userSchema = new mongoose.Schema({
-    name:{
-        type:String,
+    name: {
+        type: String,
         trim: true,
-        required:true
+        required: true
     },
-    email:{
-        type:String,
+    email: {
+        type: String,
         trim: true,
-        required:true
+        required: true
     },
-    hashed_password:{
-        type:String,
-        required:true
+    hashed_password: {
+        type: String,
+        required: true
     },
-    salt:String,
-    created:{
-        type:Date,
-        default:Date.now
+    salt: String,
+    created: {
+        type: Date,
+        default: Date.now
     },
-    updated:Date,
-    photo:{
+    updated: Date,
+    photo: {
         data: Buffer,
-        contentType:String
+        contentType: String
     },
-    about:{
+    about: {
         type: String,
         trim: true
     },
-    following:[{type: ObjectId, ref:"User"}],
-    followers:[{type: ObjectId, ref:"User"}]
-    
-    
+    following: [{ type: ObjectId, ref: "User" }],
+    followers: [{ type: ObjectId, ref: "User" }]
 });
 
-//virtual field
-userSchema.virtual('password')
-    .set(function(password){
-        //temp variabe _password
-        this._password=password;
-        //generate timestamp
-        this.salt=uuidv1();
-        //encryptPassword
-        this.hashed_password=this.encrpytPassword(password);
-        
-    })
-    .get(function(){
-        return this._password;
-    })
+/**
+ * Virtual fields are additional fields for a given model.
+ * Their values can be set manually or automatically with defined functionality.
+ * Keep in mind: virtual properties (password) don’t get persisted in the database.
+ * They only exist logically and are not written to the document’s collection.
+ */
 
-//methods
-userSchema.methods={
-    
-    authenticate:function(plainText){
-        return this.encrpytPassword(plainText)===this.hashed_password
-        
+// virtual field
+userSchema
+    .virtual("password")
+    .set(function(password) {
+        // create temporary variable called _password
+        this._password = password;
+        // generate a timestamp
+        this.salt = uuidv1();
+        // encryptPassword()
+        this.hashed_password = this.encryptPassword(password);
+    })
+    .get(function() {
+        return this._password;
+    });
+
+// methods
+userSchema.methods = {
+    authenticate: function(plainText) {
+        return this.encryptPassword(plainText) === this.hashed_password;
     },
-    
-    encrpytPassword: function(password){
-        if(!password) return "";
-        try{
-            return crypto.createHmac('sha1', this.salt)
-                   .update(password)
-                   .digest('hex');
-        }
-        catch(err){
+
+    encryptPassword: function(password) {
+        if (!password) return "";
+        try {
+            return crypto
+                .createHmac("sha1", this.salt)
+                .update(password)
+                .digest("hex");
+        } catch (err) {
             return "";
         }
     }
-}
+};
 
-module.exports=mongoose.model("User",userSchema);
+module.exports = mongoose.model("User", userSchema);

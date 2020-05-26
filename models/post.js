@@ -1,27 +1,28 @@
-const mongoose = require('mongoose');
-const {ObjectId} = mongoose.Schema;
+const mongoose = require("mongoose");
+const { ObjectId } = mongoose.Schema;
 
-const postSchema =new mongoose.Schema({
+const postSchema = new mongoose.Schema({
     title: {
-        type:String,
-        required:true
+        type: String,
+        required: true
     },
     body: {
-        type:String,
-        required:true
+        type: String,
+        required: true
     },
-    photo:{
+    photo: {
         data: Buffer,
         contenType: String
     },
-    postedBy:{
+    postedBy: {
         type: ObjectId,
         ref: "User"
     },
-    created:{
+    created: {
         type: Date,
         default: Date.now
-    }
+    },
+    updated: Date
 });
 
-module.exports=mongoose.model("Post",postSchema);
+module.exports = mongoose.model("Post", postSchema);

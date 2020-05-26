@@ -1,16 +1,15 @@
-const express=require('express');
-const {signup,signin,signout}= require("../controllers/auth");
-const {userSignupValidator}=require('../validator');
-const {userById}= require("../controllers/user");
-
+const express = require("express");
+const { signup, signin, signout } = require("../controllers/auth");
+const { userById } = require("../controllers/user");
+const { userSignupValidator } = require("../validator");
 
 const router = express.Router();
 
-router.post('/signup',userSignupValidator, signup);
-router.post('/signin', signin);
-router.get('/signout', signout);
+router.post("/signup", userSignupValidator, signup);
+router.post("/signin", signin);
+router.get("/signout", signout);
 
-//any routes contaning userId our app will firs execute userId
+// any route containing :userId, our app will first execute userByID()
 router.param("userId", userById);
 
-module.exports=router;
+module.exports = router;
