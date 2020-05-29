@@ -1,13 +1,9 @@
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
-const _ = require("lodash");
-const { sendEmail } = require("../helpers");
-// load env
-// const dotenv = require("dotenv");
-// dotenv.config();
-
 const expressJwt = require("express-jwt");
 const User = require("../models/user");
+const _ = require("lodash");
+const { sendEmail } = require("../helpers");
 
 exports.signup = async (req, res) => {
     const userExists = await User.findOne({ email: req.body.email });
@@ -61,7 +57,7 @@ exports.forgotPassword = (req, res) => {
     if (!req.body) return res.status(400).json({ message: "No request body" });
     if (!req.body.email)
         return res.status(400).json({ message: "No Email in request body" });
- 
+
     console.log("forgot password finding user with that email");
     const { email } = req.body;
     console.log("signin req.body", email);
@@ -72,13 +68,13 @@ exports.forgotPassword = (req, res) => {
             return res.status("401").json({
                 error: "User with that email does not exist!"
             });
- 
+
         // generate a token with user id and secret
         const token = jwt.sign(
             { _id: user._id, iss: "NODEAPI" },
             process.env.JWT_SECRET
         );
-        
+
         // email data
         const emailData = {
             from: "noreply@node-react.com",
@@ -91,7 +87,7 @@ exports.forgotPassword = (req, res) => {
                 process.env.CLIENT_URL
             }/reset-password/${token}</p>`
         };
- 
+
         return user.updateOne({ resetPasswordLink: token }, (err, success) => {
             if (err) {
                 return res.json({ message: err });
@@ -110,25 +106,25 @@ exports.forgotPassword = (req, res) => {
 // user model's resetPasswordLink's value must match the token
 // if the user's resetPasswordLink(token) matches the incoming req.body.resetPasswordLink(token)
 // then we got the right user
- 
+
 exports.resetPassword = (req, res) => {
     const { resetPasswordLink, newPassword } = req.body;
- 
+
     User.findOne({ resetPasswordLink }, (err, user) => {
         // if err or no user
         if (err || !user)
             return res.status("401").json({
                 error: "Invalid Link!"
             });
- 
+
         const updatedFields = {
             password: newPassword,
             resetPasswordLink: ""
         };
- 
+
         user = _.extend(user, updatedFields);
         user.updated = Date.now();
- 
+
         user.save((err, result) => {
             if (err) {
                 return res.status(400).json({
