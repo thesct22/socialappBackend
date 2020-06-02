@@ -1,0 +1,10 @@
+runtime: nodejs12
+# env_variables:
+#     NODE_ENV: "production"
+#     MONGO_URI: "mongodb+srv://thesct22:253362@nodeapi-uttch.gcp.mongodb.net/test?retryWrites=true&w=majority"
+#     PORT: 8080
+#     JWT_SECRET: "QSXCVHJNHG23FGHKJLK09UH"
+#     CLIENT_URL: "http://0.0.0.0:3000"
+#     THE_GMAIL_PSWW: "njzpycdqwlfjvbld"
+service: api
+entrypoint: "node app.js"
